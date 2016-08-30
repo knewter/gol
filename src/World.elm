@@ -1,4 +1,4 @@
-module World exposing (init, isEmpty, setLivingAt, isAliveAt, tick, cellAliveInNextGeneration)
+module World exposing (Model, init, isEmpty, setLivingAt, isAliveAt, tick, cellAliveInNextGeneration)
 
 import Array exposing (Array)
 
@@ -13,12 +13,18 @@ type alias Model =
 
 init : Model
 init =
-    initialCells 10
+    initialCells 100
 
 
 tick : Model -> Model
 tick model =
-    model
+    let
+        tickRow x row =
+            row
+                |> Array.indexedMap (\y _ -> cellAliveInNextGeneration ( x, y ) model)
+    in
+        model
+            |> Array.indexedMap tickRow
 
 
 cellAliveInNextGeneration : Position -> Model -> Bool

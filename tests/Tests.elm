@@ -51,4 +51,14 @@ all =
                     |> World.cellAliveInNextGeneration ( 0, 0 )
                     |> Expect.true "Expected (0, 0) to be alive in the next generation"
             )
+        , test "a dead cell with three live neighbors is alive after tick" <|
+            (\() ->
+                World.init
+                    |> World.setLivingAt ( 0, 1 )
+                    |> World.setLivingAt ( 1, 1 )
+                    |> World.setLivingAt ( 1, 0 )
+                    |> World.tick
+                    |> World.isAliveAt ( 0, 0 )
+                    |> Expect.true "Expected (0, 0) to be alive after tick"
+            )
         ]
