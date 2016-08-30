@@ -1,4 +1,4 @@
-module World exposing (init, isEmpty, setLivingAt, isAliveAt, tick)
+module World exposing (init, isEmpty, setLivingAt, isAliveAt, tick, cellAliveInNextGeneration)
 
 import Array exposing (Array)
 
@@ -19,6 +19,37 @@ init =
 tick : Model -> Model
 tick model =
     model
+
+
+cellAliveInNextGeneration : Position -> Model -> Bool
+cellAliveInNextGeneration position model =
+    case isAliveAt position model of
+        True ->
+            (2 == numberOfNeighbors position model)
+                || (3 == numberOfNeighbors position model)
+
+        False ->
+            (3 == numberOfNeighbors position model)
+
+
+neighbors : Position -> Model -> List Position
+neighbors ( x, y ) model =
+    [ ( x - 1, y - 1 )
+    , ( x - 1, y )
+    , ( x - 1, y + 1 )
+    , ( x, y - 1 )
+    , ( x, y + 1 )
+    , ( x + 1, y - 1 )
+    , ( x + 1, y )
+    , ( x + 1, y + 1 )
+    ]
+
+
+numberOfNeighbors : Position -> Model -> Int
+numberOfNeighbors position model =
+    neighbors position model
+        |> List.filter (\p -> isAliveAt p model)
+        |> List.length
 
 
 arrayIsAllFalse : Array Bool -> Bool
@@ -50,8 +81,18 @@ setLivingAt ( x, y ) model =
 
 
 isAliveAt : Position -> Model -> Bool
-isAliveAt position model =
-    True
+isAliveAt ( x, y ) model =
+    case Array.get x model of
+        Nothing ->
+            False
+
+        Just sub ->
+            case Array.get y sub of
+                Nothing ->
+                    False
+
+                Just val ->
+                    val
 
 
 initialCells : Int -> Array (Array Bool)

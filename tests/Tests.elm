@@ -29,11 +29,26 @@ all =
                     |> World.isEmpty
                     |> Expect.false "Expected the world to not be empty"
             )
+        , test "without adding a cell to a position, that position is not living" <|
+            (\() ->
+                World.init
+                    |> World.isAliveAt ( 1, 1 )
+                    |> Expect.false "Expected the position to not be alive"
+            )
         , test "an empty world stays empty after a tick" <|
             (\() ->
                 World.init
                     |> World.tick
                     |> World.isEmpty
                     |> Expect.true "Expected the world to be empty"
+            )
+        , test "a dead cell with three live neighbors will be alive next generation" <|
+            (\() ->
+                World.init
+                    |> World.setLivingAt ( 0, 1 )
+                    |> World.setLivingAt ( 1, 1 )
+                    |> World.setLivingAt ( 1, 0 )
+                    |> World.cellAliveInNextGeneration ( 0, 0 )
+                    |> Expect.true "Expected (0, 0) to be alive in the next generation"
             )
         ]
